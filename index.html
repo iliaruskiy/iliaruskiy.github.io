@@ -107,12 +107,13 @@
       animation-delay: 0.55s;
     }
 
-    .container.leaving .avatar-anim { animation: fadeOutUp 0.4s ease forwards 0s; }
-    .container.leaving .title { animation: fadeOutUp 0.4s ease forwards 0.05s; }
-    .container.leaving .link-btn:nth-child(1) { animation: fadeOutUp 0.4s ease forwards 0.1s; }
-    .container.leaving .link-btn:nth-child(2) { animation: fadeOutUp 0.4s ease forwards 0.15s; }
-    .container.leaving .link-btn:nth-child(3) { animation: fadeOutUp 0.4s ease forwards 0.2s; }
-    .container.leaving .subtitle { animation: fadeOutUp 0.4s ease forwards 0.25s; }
+    /* Анимация ухода растянута для плавности под 1.9 секунды */
+    .container.leaving .avatar-anim { animation: fadeOutUp 1.1s ease forwards 0s; }
+    .container.leaving .title { animation: fadeOutUp 1.1s ease forwards 0.15s; }
+    .container.leaving .link-btn:nth-child(1) { animation: fadeOutUp 1.1s ease forwards 0.3s; }
+    .container.leaving .link-btn:nth-child(2) { animation: fadeOutUp 1.1s ease forwards 0.45s; }
+    .container.leaving .link-btn:nth-child(3) { animation: fadeOutUp 1.1s ease forwards 0.6s; }
+    .container.leaving .subtitle { animation: fadeOutUp 1.1s ease forwards 0.75s; }
 
     .avatar-wrapper {
       position: relative;
@@ -381,7 +382,6 @@
       this.src = 'https://github.com/iliaruskiy.png';
     };
 
-    // Canvas частицы с индивидуальной анимацией появления и ухода
     const canvas = document.getElementById('particles-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -397,12 +397,11 @@
     class Particle {
       constructor() {
         this.reset();
-        // Входной разброс
         this.y = canvas.height + Math.random() * 200;
         this.targetY = Math.random() * canvas.height;
         this.progress = 0;
         this.speed = Math.random() * 0.02 + 0.01;
-        this.delay = Math.random() * 30; // Индивидуальная задержка
+        this.delay = Math.random() * 60; // Увеличен разброс задержек под длительность 1.9 с
         this.frame = 0;
       }
       
@@ -414,22 +413,21 @@
         this.vy = (Math.random() - 0.5) * 0.4;
         this.targetAlpha = Math.random() * 0.5 + 0.1;
         this.alpha = 0;
-        this.exitVx = (Math.random() - 0.5) * 12;
-        this.exitVy = -(Math.random() * 8 + 4);
+        // Замедлена разлетающаяся физика для ещё более затяжного ухода
+        this.exitVx = (Math.random() - 0.5) * 4.5;
+        this.exitVy = -(Math.random() * 3 + 1.5);
       }
 
       update() {
         this.frame++;
         
         if (isLeaving) {
-          // Индивидуальный разлет при уходе
           if (this.frame > this.delay) {
             this.x += this.exitVx;
             this.y += this.exitVy;
-            this.alpha *= 0.92;
+            this.alpha *= 0.975; // Мягкое длительное угасание
           }
         } else {
-          // Индивидуальный плавный вход
           if (this.alpha < this.targetAlpha) {
             this.alpha += 0.01;
           }
@@ -476,9 +474,9 @@
         container.classList.add('leaving');
         isLeaving = true;
         
-        // Сброс кадров для задержки ухода частиц
         particles.forEach(p => p.frame = 0);
 
+        // Переход ровно через 1900 мс (1.9 секунды)
         setTimeout(() => {
           if (target === '_blank') {
             window.open(href, '_blank');
@@ -488,7 +486,7 @@
           } else {
             window.location.href = href;
           }
-        }, 650);
+        }, 1900);
       });
     });
   </script>
