@@ -20,6 +20,8 @@
       --color-telegram: #229ED9;
       --color-github: #f0f6fc;
       --color-steam: #2a475e;
+      
+      --spring-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     * {
@@ -51,29 +53,21 @@
       overflow: hidden;
     }
 
+    #particles-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
     .bg-grid {
       position: absolute;
       inset: 0;
       z-index: 2;
       background-size: 40px 40px;
       background-image: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    }
-
-    @keyframes floatSmooth {
-      0% {
-        transform: translate(0, 0) scale(1);
-      }
-      33% {
-        transform: translate(25vw, -20vh) scale(1.25);
-      }
-      66% {
-        transform: translate(-20vw, 25vh) scale(0.85);
-      }
-      100% {
-        transform: translate(0, 0) scale(1);
-      }
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
     }
 
     .container {
@@ -91,8 +85,9 @@
     .link-btn,
     .subtitle {
       opacity: 0;
-      transform: translateY(25px);
-      animation: fadeInUp 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      transform: translateY(40px) scale(0.9);
+      filter: blur(10px);
+      animation: fadeInUp 0.9s var(--spring-easing) forwards;
     }
 
     .avatar-anim {
@@ -112,24 +107,12 @@
       animation-delay: 0.55s;
     }
 
-    .container.leaving .avatar-anim {
-      animation: fadeOutUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards 0s;
-    }
-    .container.leaving .title {
-      animation: fadeOutUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.07s;
-    }
-    .container.leaving .link-btn:nth-child(1) {
-      animation: fadeOutUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.14s;
-    }
-    .container.leaving .link-btn:nth-child(2) {
-      animation: fadeOutUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.21s;
-    }
-    .container.leaving .link-btn:nth-child(3) {
-      animation: fadeOutUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.28s;
-    }
-    .container.leaving .subtitle {
-      animation: fadeOutUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.35s;
-    }
+    .container.leaving .avatar-anim { animation: fadeOutUp 0.4s ease forwards 0s; }
+    .container.leaving .title { animation: fadeOutUp 0.4s ease forwards 0.05s; }
+    .container.leaving .link-btn:nth-child(1) { animation: fadeOutUp 0.4s ease forwards 0.1s; }
+    .container.leaving .link-btn:nth-child(2) { animation: fadeOutUp 0.4s ease forwards 0.15s; }
+    .container.leaving .link-btn:nth-child(3) { animation: fadeOutUp 0.4s ease forwards 0.2s; }
+    .container.leaving .subtitle { animation: fadeOutUp 0.4s ease forwards 0.25s; }
 
     .avatar-wrapper {
       position: relative;
@@ -137,30 +120,32 @@
       height: 100px;
       border-radius: 50%;
       padding: 3px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.15));
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.02), rgba(138, 43, 226, 0.4));
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
-      transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: transform 0.5s var(--spring-easing), box-shadow 0.5s ease;
       cursor: pointer;
     }
 
-    .avatar-wrapper::after {
+    .avatar-wrapper::before {
       content: '';
       position: absolute;
-      inset: -3px;
+      inset: -5px;
       border-radius: 50%;
-      border: 2px solid rgba(138, 43, 226, 0);
-      box-shadow: 0 0 0 rgba(138, 43, 226, 0);
-      transition: all 0.35s ease;
-      pointer-events: none;
+      background: linear-gradient(45deg, rgba(138, 43, 226, 0.6), transparent, rgba(34, 158, 217, 0.6));
+      filter: blur(12px);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: -1;
     }
 
     .avatar-wrapper:hover {
-      transform: scale(1.04);
+      transform: scale(1.1) rotate(3deg);
+      box-shadow: 0 20px 40px rgba(138, 43, 226, 0.35);
     }
 
-    .avatar-wrapper:hover::after {
-      border-color: rgba(138, 43, 226, 0.55);
-      box-shadow: 0 0 25px rgba(138, 43, 226, 0.45);
+    .avatar-wrapper:hover::before {
+      opacity: 1;
+      animation: spinGlow 4s linear infinite;
     }
 
     .avatar-wrapper img {
@@ -177,9 +162,14 @@
       font-weight: 700;
       letter-spacing: -0.02em;
       margin-bottom: 28px;
-      background: linear-gradient(180deg, #ffffff 0%, #a3b0c2 100%);
+      background: linear-gradient(270deg, #ffffff, #a3b0c2, #8a2be2, #ffffff);
+      background-size: 300% 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      display: inline-block;
+      animation: fadeInUp 0.9s var(--spring-easing) forwards, 
+                 glowShift 6s ease infinite, 
+                 floatTitle 3s ease-in-out infinite;
     }
 
     .links-list {
@@ -206,38 +196,57 @@
       justify-content: space-between;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
-                  background 0.3s ease, 
-                  border-color 0.3s ease, 
-                  box-shadow 0.3s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 20px rgba(0,0,0,0.2);
+      transition: transform 0.4s var(--spring-easing), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
       overflow: hidden;
     }
 
-    .link-btn[data-brand="telegram"]:hover {
-      border-color: rgba(34, 158, 217, 0.5);
-      background: rgba(34, 158, 217, 0.08);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 8px 25px rgba(34, 158, 217, 0.15);
-      transform: translateY(-2px) scale(1.015);
+    .link-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 20%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.15);
+      transform: rotate(30deg);
+      transition: transform 0.6s ease;
+      pointer-events: none;
     }
-    .link-btn[data-brand="telegram"]:hover .link-icon { fill: var(--color-telegram); }
+
+    .link-btn:hover::after {
+      transform: translate(500%, 0) rotate(30deg);
+    }
+
+    .link-btn:active {
+      transform: scale(0.96) translateY(0) !important;
+      transition-duration: 0.1s;
+    }
+
+    .link-btn[data-brand="telegram"]:hover {
+      border-color: rgba(34, 158, 217, 0.6);
+      background: rgba(34, 158, 217, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 30px rgba(34, 158, 217, 0.3);
+      transform: translateY(-4px) scale(1.02);
+    }
+    .link-btn[data-brand="telegram"]:hover .link-icon { fill: var(--color-telegram); transform: scale(1.15) rotate(-5deg); }
 
     .link-btn[data-brand="github"]:hover {
-      border-color: rgba(240, 246, 252, 0.4);
-      background: rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 8px 25px rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px) scale(1.015);
+      border-color: rgba(240, 246, 252, 0.5);
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 30px rgba(255, 255, 255, 0.15);
+      transform: translateY(-4px) scale(1.02);
     }
-    .link-btn[data-brand="github"]:hover .link-icon { fill: var(--color-github); }
+    .link-btn[data-brand="github"]:hover .link-icon { fill: var(--color-github); transform: scale(1.15) rotate(5deg); }
 
     .link-btn[data-brand="steam"]:hover {
-      border-color: rgba(42, 71, 94, 0.8);
-      background: rgba(27, 40, 56, 0.6);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 8px 25px rgba(42, 71, 94, 0.3);
-      transform: translateY(-2px) scale(1.015);
+      border-color: rgba(42, 71, 94, 0.9);
+      background: rgba(27, 40, 56, 0.7);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 30px rgba(42, 71, 94, 0.4);
+      transform: translateY(-4px) scale(1.02);
     }
-    .link-btn[data-brand="steam"]:hover .link-icon { fill: #2a475e; }
+    .link-btn[data-brand="steam"]:hover .link-icon { fill: #4a90e2; transform: scale(1.15) rotate(-5deg); }
 
     .link-content {
       display: flex;
@@ -250,19 +259,19 @@
       height: 24px;
       fill: currentColor;
       flex-shrink: 0;
-      transition: fill 0.3s ease;
+      transition: transform 0.4s var(--spring-easing), fill 0.3s ease;
     }
 
     .arrow-icon {
       width: 18px;
       height: 18px;
       fill: var(--text-muted);
-      transition: transform 0.3s ease, fill 0.3s ease;
+      transition: transform 0.4s var(--spring-easing), fill 0.3s ease;
     }
 
     .link-btn:hover .arrow-icon {
       fill: var(--text-main);
-      transform: translateX(4px);
+      transform: translateX(6px) scale(1.2);
     }
 
     .subtitle {
@@ -271,27 +280,52 @@
     }
 
     @keyframes fadeInUp {
-      to {
+      0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.9);
+        filter: blur(10px);
+      }
+      100% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
+        filter: blur(0);
       }
     }
 
     @keyframes fadeOutUp {
-      from {
+      0% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
+        filter: blur(0);
       }
-      to {
+      100% {
         opacity: 0;
-        transform: translateY(-30px);
+        transform: translateY(-40px) scale(0.9);
+        filter: blur(10px);
       }
+    }
+
+    @keyframes spinGlow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes glowShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes floatTitle {
+      0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 0px rgba(138, 43, 226, 0)); }
+      50% { transform: translateY(-3px); filter: drop-shadow(0 4px 12px rgba(138, 43, 226, 0.4)); }
     }
   </style>
 </head>
 <body>
 
   <div class="bg-canvas" id="bg-canvas">
+    <canvas id="particles-canvas"></canvas>
     <div class="bg-grid"></div>
   </div>
 
@@ -347,33 +381,91 @@
       this.src = 'https://github.com/iliaruskiy.png';
     };
 
-    const bgCanvas = document.getElementById('bg-canvas');
-    const blobCount = 4;
-    for (let i = 0; i < blobCount; i++) {
-      const glow = document.createElement('div');
-      const size = Math.floor(Math.random() * 25) + 45;
-      const top = Math.floor(Math.random() * 80) - 10;
-      const left = Math.floor(Math.random() * 80) - 10;
-      const val = Math.floor(Math.random() * 180) + 75;
-      const opacity = (Math.random() * 0.12 + 0.08).toFixed(3);
-      const duration = Math.floor(Math.random() * 6) + 7;
-      const direction = Math.random() > 0.5 ? 'alternate' : 'alternate-reverse';
+    // Canvas частицы с индивидуальной анимацией появления и ухода
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let isLeaving = false;
 
-      glow.style.cssText = `
-        position: absolute;
-        width: ${size}vw;
-        height: ${size}vw;
-        top: ${top}%;
-        left: ${left}%;
-        border-radius: 50%;
-        filter: blur(90px);
-        background: rgba(${val}, ${val}, ${val}, ${opacity});
-        animation: floatSmooth ${duration}s ease-in-out infinite ${direction};
-        pointer-events: none;
-      `;
-      bgCanvas.appendChild(glow);
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.reset();
+        // Входной разброс
+        this.y = canvas.height + Math.random() * 200;
+        this.targetY = Math.random() * canvas.height;
+        this.progress = 0;
+        this.speed = Math.random() * 0.02 + 0.01;
+        this.delay = Math.random() * 30; // Индивидуальная задержка
+        this.frame = 0;
+      }
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
+        this.targetAlpha = Math.random() * 0.5 + 0.1;
+        this.alpha = 0;
+        this.exitVx = (Math.random() - 0.5) * 12;
+        this.exitVy = -(Math.random() * 8 + 4);
+      }
+
+      update() {
+        this.frame++;
+        
+        if (isLeaving) {
+          // Индивидуальный разлет при уходе
+          if (this.frame > this.delay) {
+            this.x += this.exitVx;
+            this.y += this.exitVy;
+            this.alpha *= 0.92;
+          }
+        } else {
+          // Индивидуальный плавный вход
+          if (this.alpha < this.targetAlpha) {
+            this.alpha += 0.01;
+          }
+          this.x += this.vx;
+          this.y += this.vy;
+
+          if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+            this.reset();
+          }
+        }
+      }
+
+      draw() {
+        if (this.alpha <= 0) return;
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
+    for (let i = 0; i < 55; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // Переходы по ссылкам
     const container = document.getElementById('container');
     document.querySelectorAll('.link-btn').forEach(btn => {
       btn.addEventListener('click', function(e) {
@@ -382,18 +474,23 @@
         const target = this.getAttribute('target');
         
         container.classList.add('leaving');
+        isLeaving = true;
         
+        // Сброс кадров для задержки ухода частиц
+        particles.forEach(p => p.frame = 0);
+
         setTimeout(() => {
           if (target === '_blank') {
             window.open(href, '_blank');
             container.classList.remove('leaving');
+            isLeaving = false;
+            particles.forEach(p => p.reset());
           } else {
             window.location.href = href;
           }
-        }, 750);
+        }, 650);
       });
     });
   </script>
 </body>
 </html>
-
